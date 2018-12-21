@@ -1,0 +1,41 @@
+﻿@using Sitecore.XA.Feature.Compliancy.Models
+@using Sitecore.Support.XA.Feature.Compliancy.Models
+
+@model Sitecore.Support.XA.Feature.Compliancy.Models.CookieWarningRenderingModel
+
+@{
+    Layout = Sitecore.Configuration.Settings.GetSetting("XA.Foundation.Presentation.MetaComponentLayoutPath", "../SXA/Meta Component Layout.cshtml");
+}
+
+@if ((Model != null && Model.ShowCookieWarning) || Model.PageItem.TemplateID == Sitecore.XA.Foundation.Presentation.Templates.MetadataPartialDesign.ID)
+{
+    <div class="cookie-notification @Model.SelectedCookieWarningType.ToString().ToLower()" style="@(Model.IsEdit ? "display:none" : "")">
+        @if (Model.ShowCloseButton)
+        {
+            <div class='close'>
+                @{
+                    var onClickEvent1 = Model.SelectedCookieWarningType == CookieWarningType.AcceptOnClose ? "XA.cookies.createCookie('cookie-notification', 1, 365);XA.cookies.removeCookieWarning();" : "XA.cookies.removeCookieWarning();";
+                    onClickEvent1 = Model.IsEdit ? "" : onClickEvent1;
+                }
+                <a onclick="@onClickEvent1">X</a>
+            </div>
+        }
+        <div class="info">
+            @Html.Sitecore().Field("CookieWarningContent", Model.CookieWarningContentItem);
+        </div>
+        @if (!string.IsNullOrEmpty(Model.CookieWarningLearnMoreTarget))
+        {
+            <div class='learnMore'>
+                <a href="@Model.CookieWarningLearnMoreTarget">
+                    @Model.CookieWarningLearnMoreButtonText
+                </a>
+            </div>
+        }
+        <div class="submit">
+            @{
+                var onClickEvent2 = Model.IsEdit ? "" : "XA.cookies.createCookie('cookie-notification', 1, 365);XA.cookies.removeCookieWarning();";
+            }
+            <a onclick="@onClickEvent2">@Model.CookieWarningButtonText</a>
+        </div>
+    </div>
+}
